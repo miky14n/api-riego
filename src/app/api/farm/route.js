@@ -1,9 +1,24 @@
 import { NextResponse } from "next/server";
 import { neon_sql } from "@/app/lib/neon"; // Assuming you have your Neon connection setup here
 
-export async function GET() {
+export async function GET(req) {
   try {
-    const farms = await neon_sql`SELECT * FROM farm`;
+    // Obtener los parámetros de la URL
+    const { searchParams } = new URL(req.url);
+    const filter = searchParams.get("filter"); // Obtiene el valor del query param "filter"
+
+    // Validar si el filtro es "asc" o "dsc", si no, se retorna sin ordenar
+    let orderBy = "";
+    if (filter === "asc") {
+      orderBy = "ORDER BY creation_ts ASC";
+    } else if (filter === "dsc") {
+      orderBy = "ORDER BY creation_ts DESC";
+    }
+
+    // Ejecutar la consulta con orden si es necesario
+    const query = `SELECT * FROM farm ${orderBy}`;
+    const farms = await neon_sql(query);
+
     return NextResponse.json(farms, { status: 200 });
   } catch (error) {
     console.error("Error al obtener los datos:", error);
