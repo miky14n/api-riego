@@ -25,7 +25,12 @@ export async function POST(request) {
       ? parseInt(data.ambientHumidity)
       : null;
     const humity = parseInt(data.humity);
-
+    /**const creation_ts = new Date().toLocaleString("es-BO", {
+      timeZone: "America/La_Paz",
+    }); */
+    const creation_ts = new Date()
+      .toLocaleString("sv-SE", { timeZone: "America/La_Paz" })
+      .replace(" ", "T");
     if (isNaN(temperature) || isNaN(humity)) {
       return NextResponse.json(
         { error: "Datos inválidos, deben ser enteros" },
@@ -34,9 +39,9 @@ export async function POST(request) {
     }
 
     // Insertar en la base de datos
-    const newFarm = await neon`
+    const newFarm = await neon_sql`
       INSERT INTO farm (temperature, ambientHumidity, humity, creation_ts)
-      VALUES (${temperature}, ${ambientHumidity}, ${humity}, NOW())
+      VALUES (${temperature}, ${ambientHumidity}, ${humity}, ${creation_ts})
       RETURNING *;
     `;
 
