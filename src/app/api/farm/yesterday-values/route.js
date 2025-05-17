@@ -9,7 +9,7 @@ export async function GET() {
         temperature,
         ambienthumidity,
         humity,
-        creation_ts AT TIME ZONE 'UTC' AT TIME ZONE 'America/La_Paz' AS creation_ts
+        creation_ts AT TIME ZONE 'UTC' AS creation_ts
         FROM farm
         WHERE creation_ts >= CURRENT_DATE - INTERVAL '1 day'
         AND creation_ts < CURRENT_DATE
