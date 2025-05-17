@@ -1,21 +1,16 @@
 import { NextResponse } from "next/server";
-import { neon_sql } from "@/app/lib/neon"; // Assuming you have your Neon connection setup here
+import { neon_sql } from "@/app/lib/neon";
 
 export async function GET(req) {
   try {
-    // Obtener los parámetros de la URL
     const { searchParams } = new URL(req.url);
-    const filter = searchParams.get("filter"); // Obtiene el valor del query param "filter"
-
-    // Validar si el filtro es "asc" o "dsc", si no, se retorna sin ordenar
+    const filter = searchParams.get("filter");
     let orderBy = "";
     if (filter === "asc") {
       orderBy = "ORDER BY creation_ts ASC";
     } else if (filter === "dsc") {
       orderBy = "ORDER BY creation_ts DESC";
     }
-
-    // Ejecutar la consulta con orden si es necesario
     const query = `SELECT * FROM farm ${orderBy}`;
     const farms = await neon_sql(query);
 
@@ -33,8 +28,6 @@ export async function POST(request) {
   try {
     const data = await request.json();
     console.log("Datos recibidos:", data);
-
-    // Asegurar que los valores sean enteros
     const temperature = parseInt(data.temperature);
     const ambientHumidity = data.ambientHumidity
       ? parseInt(data.ambientHumidity)
@@ -52,14 +45,11 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-
-    // Insertar en la base de datos
     const newFarm = await neon_sql`
       INSERT INTO farm (temperature, ambientHumidity, humity, creation_ts)
       VALUES (${temperature}, ${ambientHumidity}, ${humity}, ${creation_ts})
       RETURNING *;
     `;
-
     return NextResponse.json(newFarm[0], { status: 201 });
   } catch (error) {
     console.error("Error al insertar los datos del sensor:", error);
