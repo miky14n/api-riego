@@ -33,9 +33,6 @@ export async function POST(request) {
       ? parseInt(data.ambientHumidity)
       : null;
     const humity = parseInt(data.humity);
-    /**const creation_ts = new Date().toLocaleString("es-BO", {
-      timeZone: "America/La_Paz",
-    }); */
     const creation_ts = new Date()
       .toLocaleString("sv-SE", { timeZone: "America/La_Paz" })
       .replace(" ", "T");
